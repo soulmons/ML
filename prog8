@@ -1,0 +1,31 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB,GaussianNB
+from sklearn.metrics import accuracy_score,f1_score
+from sklearn.feature_extraction.text import CountVectorizer
+import matplotlib.pyplot as plt
+data=pd.read_csv("C:/Users/kssum/Downloads/spamdata_converted.csv",encoding='latin-1')
+x=data['Message']
+y=data['label']
+classification_distribution=data['label'].value_counts()
+classification_distribution.plot(kind='pie',autopct="%1.1ff%%",colors=['#ff6ff7','#99ff99'])
+plt.title("distribution of label")
+plt.show()
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
+vectorizer=CountVectorizer()
+x_train_vec=vectorizer.fit_transform(x_train)
+x_test_vec=vectorizer.transform(x_test)
+mnb=MultinomialNB(alpha=0.8,fit_prior=True,force_alpha=True)
+mnb.fit(x_train_vec,y_train)
+gb=GaussianNB()
+gb.fit(x_train_vec.toarray(),y_train)
+y_mnb_predicted=mnb.predict(x_test_vec)
+y_gb_predicted=gb.predict(x_test_vec.toarray())
+acc_score_mnb=accuracy_score(y_test,y_mnb_predicted)
+acc_score_gb=accuracy_score(y_test,y_gb_predicted)
+f1_score_mnb=f1_score(y_test,y_mnb_predicted,pos_label='spam')
+f1_score_gb=f1_score(y_test,y_gb_predicted,pos_label='spam')
+print('multinomial NB : accuracy_score',acc_score_mnb)
+print('multinomial NB : f1_score for spam',f1_score_mnb)
+print('gaussian NB : accuracy_score',acc_score_gb)
+print('gaussian NB : f1_score for spam',f1_score_gb)
