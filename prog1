@@ -10,6 +10,7 @@ target = np.array(data)[:,-1]
 target
 
 def train(con, tar):
+specific_h="NULL"
 for i, val in enumerate(tar):
 if val == 'yes':
 specific_h = con[i].copy()
